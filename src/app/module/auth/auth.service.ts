@@ -21,6 +21,9 @@ import type {
 } from "./auth.interface";
 import { googleClient } from "../../lib/googleAuth";
 import { redisClient } from "../../lib/redis";
+import { transporter } from "../../lib/nodemailer";
+import { forgotPasswordTemplate } from "../../templates/forgot-password.template";
+import { passwordResetSuccessfulTemplate } from "../../templates/password-reset-successfulTemplate";
 
 const registerPatient = async (payload: IRegisterPatientPayload) => {
 	const { name, password, patient: PatientData } = payload;
@@ -366,6 +369,15 @@ const forgotPassword = async (payload: IForgotPasswordPayload) => {
 			value: 5 * 60,
 		},
 	});
+
+	await transporter.sendMail({
+		from: config.email_sender,
+		to: isUserExist.email,
+		subject: "Forgot Password",
+		// text: `Your OTP is ${otp}`
+		html: forgotPasswordTemplate(otp)
+	})
+
 };
 const resetPassword = async (payload: IResetPasswordPayload) => {
 	const { email, otp, newPassword } = payload;
@@ -413,6 +425,15 @@ const resetPassword = async (payload: IResetPasswordPayload) => {
 		}
 	})
 	await redisClient.del([key])
+
+	await transporter.sendMail({
+		from: config.email_sender,
+		to: isUserExist.email,
+		subject: "Password Reset Successful",
+		// text: `Your OTP is ${otp}`
+		html: passwordResetSuccessfulTemplate()
+	})
+
 };
 
 export default {
