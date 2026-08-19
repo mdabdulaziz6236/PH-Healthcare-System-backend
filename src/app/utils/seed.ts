@@ -32,7 +32,7 @@ export const seedSuperAdmin = async () => {
 			data: {
 				name,
 				email,
-                role: Role.SUPER_ADMIN,
+				role: Role.SUPER_ADMIN,
 				password: hashedPassword,
 				needPasswordChange: false,
 				emailVerified: true,
@@ -53,7 +53,7 @@ export const seedSuperAdmin = async () => {
 
 export const seedAdmin = async () => {
 	try {
-        const name = config.tester_admin_name;
+		const name = config.tester_admin_name;
 		const email = config.tester_admin_email;
 		const password = config.tester_admin_password;
 		if (!name || !email || !password) {
@@ -71,7 +71,6 @@ export const seedAdmin = async () => {
 			return;
 		}
 
-
 		const hashedPassword = await bcrypt.hash(
 			password,
 			Number(config.bcrypt_salt_rounds),
@@ -81,7 +80,7 @@ export const seedAdmin = async () => {
 			data: {
 				name,
 				email,
-                role: Role.ADMIN,
+				role: Role.ADMIN,
 				password: hashedPassword,
 				needPasswordChange: false,
 				emailVerified: true,
@@ -100,10 +99,9 @@ export const seedAdmin = async () => {
 	}
 };
 
-
 export const seedDoctor = async () => {
 	try {
-        const name = config.tester_doctor_name;
+		const name = config.tester_doctor_name;
 		const email = config.tester_doctor_email;
 		const password = config.tester_doctor_password;
 		if (!name || !email || !password) {
@@ -121,7 +119,6 @@ export const seedDoctor = async () => {
 			return;
 		}
 
-		
 		const hashedPassword = await bcrypt.hash(
 			password,
 			Number(config.bcrypt_salt_rounds),
@@ -131,7 +128,7 @@ export const seedDoctor = async () => {
 			data: {
 				name,
 				email,
-                role: Role.DOCTOR,
+				role: Role.DOCTOR,
 				password: hashedPassword,
 				needPasswordChange: false,
 				emailVerified: true,
@@ -149,6 +146,3 @@ export const seedDoctor = async () => {
 		}
 	}
 };
-
-
-

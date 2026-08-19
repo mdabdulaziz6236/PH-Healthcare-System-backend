@@ -12,10 +12,10 @@ const main = async () => {
 		await prisma.$connect();
 		console.log("Connected to the database successfully.");
 		await redisClient.connect();
-		console.log("Redis Connected Successfully.")
+		console.log("Redis Connected Successfully.");
 
 		await transporter.verify();
-		console.log("Nodemailer Connected Successfully.")
+		console.log("Nodemailer Connected Successfully.");
 
 		await seedSuperAdmin();
 		await seedAdmin();

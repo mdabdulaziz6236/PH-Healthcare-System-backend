@@ -57,5 +57,5 @@ export const UserValidation = {
 	PatientRegistraitonZodSchema,
 	LoginZodSchema,
 	ForgotPasswordSchema,
-	ResetPasswordSchema
+	ResetPasswordSchema,
 };

@@ -1,5 +1,4 @@
-/** biome-ignore-all lint/style/useConst: <explanation> */
-import { OAuth2Client, type TokenPayload } from "google-auth-library";
+import type { TokenPayload } from "google-auth-library";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import type { JwtPayload, SignOptions } from "jsonwebtoken";
@@ -376,7 +375,7 @@ const forgotPassword = async (payload: IForgotPasswordPayload) => {
 	const html = await ejs.renderFile(templatePath, {
 		otp,
 		name: isUserExist.name,
-		expirationTimeInMinutes:expirationTimeInSeconds / 60,
+		expirationTimeInMinutes: expirationTimeInSeconds / 60,
 	});
 	await transporter.sendMail({
 		from: config.email_sender,
