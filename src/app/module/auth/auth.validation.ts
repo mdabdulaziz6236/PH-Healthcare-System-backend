@@ -22,7 +22,7 @@ const PatientRegistraitonZodSchema = z.object({
 
 const PatientEmailVerifyZodSchema = z.object({
 	email: z.email(),
-	otp: z.string().length(6)
+	otp: z.string().length(6),
 });
 
 const LoginZodSchema = z.object({

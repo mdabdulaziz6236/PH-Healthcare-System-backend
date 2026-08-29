@@ -122,8 +122,10 @@ const verifyPatientEmail = async (payload: IVerifyEmailPayload) => {
 	if (!redisPatientData) {
 		throw new Error("Patient Doesn't Exist");
 	}
-	await redisClient.del(patietRegistrationKey);
-	const patientPayload = JSON.parse(redisPatientData) as IRegisterPatientPayload;
+
+	const patientPayload = JSON.parse(
+		redisPatientData,
+	) as IRegisterPatientPayload;
 
 	const createdUser = await prisma.user.create({
 		data: {
@@ -143,6 +145,23 @@ const verifyPatientEmail = async (payload: IVerifyEmailPayload) => {
 		},
 		omit: { password: true },
 		include: { patient: true },
+	});
+
+	await redisClient.del(patietRegistrationKey);
+
+	const templatePath = path.join(
+		process.cwd(),
+		"src/app/templates/patient-welcome-email.ejs",
+	);
+	const html = await ejs.renderFile(templatePath, {
+		name: createdUser.name,
+		email: createdUser.email,
+	});
+	await transporter.sendMail({
+		from: config.email_sender,
+		to: email,
+		subject: "Welcome To PH Healthcare System",
+		html,
 	});
 
 	const { patient, ...user } = createdUser;
@@ -381,6 +400,21 @@ const googleLogin = async (payload: IGoogleLoginPayload) => {
 						},
 					},
 				},
+			});
+
+			const templatePath = path.join(
+				process.cwd(),
+				"src/app/templates/patient-welcome-email.ejs",
+			);
+			const html = await ejs.renderFile(templatePath, {
+				name: user.name,
+				email: user.email,
+			});
+			await transporter.sendMail({
+				from: config.email_sender,
+				to: user.email,
+				subject: "Welcome To PH Healthcare System",
+				html,
 			});
 		}
 	}
