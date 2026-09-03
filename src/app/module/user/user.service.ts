@@ -1,4 +1,4 @@
-import { UploadApiResponse } from "cloudinary";
+import type { UploadApiResponse } from "cloudinary";
 import { cloudinary } from "../../lib/cloudinary";
 import { prisma } from "../../lib/prisma";
 
@@ -9,7 +9,7 @@ const uploadProfileImage = async (buffer: Buffer, userId: string) => {
 		},
 		select: {
 			imagePublicId: true,
-            imageUrl: true
+			imageUrl: true,
 		},
 	});
 
@@ -48,9 +48,9 @@ const uploadProfileImage = async (buffer: Buffer, userId: string) => {
 	});
 	console.log(updateUser);
 
-    if(currentUser?.imagePublicId && currentUser.imageUrl){
-        await cloudinary.uploader.destroy(currentUser.imagePublicId ,)
-    }
+	if (currentUser?.imagePublicId && currentUser.imageUrl) {
+		await cloudinary.uploader.destroy(currentUser.imagePublicId);
+	}
 
 	return updateUser;
 };
