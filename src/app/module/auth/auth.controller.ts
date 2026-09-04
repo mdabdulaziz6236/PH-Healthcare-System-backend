@@ -4,9 +4,6 @@ import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import type { IRequestUser } from "./auth.interface";
 import AuthService from "./auth.service";
-import { email } from "zod";
-
-// import { PatientValidation } from "./auth.validation";
 
 const registerPatient = catchAsync(async (req: Request, res: Response) => {
 	// const payload = PatientValidation.PatientRegistraitonZodSchema.safeParse(req.body);
