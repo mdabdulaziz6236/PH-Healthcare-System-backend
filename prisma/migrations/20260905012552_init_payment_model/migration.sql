@@ -1,0 +1,57 @@
+-- CreateEnum
+CREATE TYPE "AppointmentStatus" AS ENUM ('PENDING', 'CONFIRMED', 'CANCELED', 'ONGOING', 'COMPLETED');
+
+-- CreateEnum
+CREATE TYPE "PaymentStatus" AS ENUM ('UNPAID', 'PAID', 'FAILED', 'CANCELLED', 'REFUNDED');
+
+-- CreateEnum
+CREATE TYPE "PaymentGateway" AS ENUM ('BKASH', 'NAGAD', 'ROCKET', 'SSLCOMMERZ');
+
+-- CreateTable
+CREATE TABLE "appointments" (
+    "id" TEXT NOT NULL,
+    "status" "AppointmentStatus" NOT NULL DEFAULT 'PENDING',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "appointments_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "payments" (
+    "id" TEXT NOT NULL,
+    "status" "PaymentStatus" NOT NULL DEFAULT 'UNPAID',
+    "amount" DECIMAL(10,2) NOT NULL,
+    "currency" TEXT NOT NULL DEFAULT 'BDT',
+    "paymentGateway" "PaymentGateway" NOT NULL DEFAULT 'BKASH',
+    "merchatInvoiceNumber" TEXT NOT NULL,
+    "bkashPaymentId" TEXT,
+    "bkashTrxId" TEXT,
+    "payerReference" TEXT,
+    "getwayResponse" JSONB,
+    "paidAt" TEXT,
+    "refundTrxId" TEXT,
+    "refundAmount" DECIMAL(10,2),
+    "refundReason" TEXT,
+    "refundAt" TEXT,
+    "appointmentId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "payments_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "payments_merchatInvoiceNumber_key" ON "payments"("merchatInvoiceNumber");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "payments_bkashPaymentId_key" ON "payments"("bkashPaymentId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "payments_bkashTrxId_key" ON "payments"("bkashTrxId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "payments_appointmentId_key" ON "payments"("appointmentId");
+
+-- AddForeignKey
+ALTER TABLE "payments" ADD CONSTRAINT "payments_appointmentId_fkey" FOREIGN KEY ("appointmentId") REFERENCES "appointments"("id") ON DELETE CASCADE ON UPDATE CASCADE;

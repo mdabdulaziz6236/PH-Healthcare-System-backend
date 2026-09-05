@@ -2,10 +2,10 @@ import type { Request, Response } from "express";
 import httpStatus from "http-status";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
-import { AppointmentSevice } from "./appointment.service";
+import { AppointmentService } from "./appointment.service";
 
 const bookAppointment = catchAsync(async (req: Request, res: Response) => {
-	const result = await AppointmentSevice.bookAppointment();
+	const result = await AppointmentService.bookAppointment();
 	sendResponse(res, {
 		statusCode: httpStatus.OK,
 		success: true,
@@ -17,7 +17,7 @@ const bookAppointment = catchAsync(async (req: Request, res: Response) => {
 const bookAppointmentCallback = catchAsync(
 	async (req: Request, res: Response) => {
 		const { executedPaymentResult, redirectUrl } =
-			await AppointmentSevice.bookAppointmentCallback(req.query);
+			await AppointmentService.bookAppointmentCallback(req.query);
 		res.redirect(redirectUrl);
 		console.log("bookAppointmentCallback result", executedPaymentResult);
 		// sendResponse(res, {

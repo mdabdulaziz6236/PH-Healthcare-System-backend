@@ -1,19 +1,20 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, {
-	type NextFunction,
 	type Application,
+	type NextFunction,
 	type Request,
 	type Response,
 } from "express";
 import httpStatus from "http-status";
 import config from "./app/config";
+import { getBkashIdToken } from "./app/lib/bkash";
 import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
 import { notFound } from "./app/middleware/notFound";
+import { AppointmentRoutes } from "./app/module/appointment/appointment.route";
 import { AuthRoutes } from "./app/module/auth/auth.route";
 import { UserRoutes } from "./app/module/user/user.route";
-import { getBkashIdToken } from "./app/lib/bkash";
-import { AppointmentRoutes } from "./app/module/appointment/appointment.route";
+
 const app: Application = express();
 
 app.use(

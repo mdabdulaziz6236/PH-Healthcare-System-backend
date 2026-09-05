@@ -1,0 +1,36 @@
+model Payment {
+  id String @id @default(uuid())
+
+  status PaymentStatus @default(UNPAID)
+
+  amount   Decimal @db.Decimal(10, 2) // 100.23
+  currency String  @default("BDT")
+
+  paymentGateway       PaymentGateway @default(BKASH)
+  merchatInvoiceNumber String         @unique
+
+  // bKash Specific Fields
+  bkashPaymentId String? @unique
+  bkashTrxId     String? @unique
+  payerReference String? // user email / phone number
+
+  // Response & Timestamps
+  getwayResponse Json?
+  paidAt         String?
+
+  // Refund Fields
+  refundTrxId  String?
+  refundAmount Decimal? @db.Decimal(10, 2)
+  refundReason String?
+  refundAt     String?
+
+  // Relations
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  // System Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@map("payments")
+}

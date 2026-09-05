@@ -4,7 +4,6 @@ import { getBkashIdToken } from "../../lib/bkash";
 const bookAppointment = async () => {
 	// business logics
 	const bkashIdToken = await getBkashIdToken();
-	console.log("bkashIdToken", bkashIdToken);
 	if (!bkashIdToken) {
 		throw new Error("No Bkash Acess token Found!");
 	}
@@ -100,7 +99,7 @@ const bookAppointmentCallback = async (query: Record<string, any>) => {
 	};
 };
 
-export const AppointmentSevice = {
+export const AppointmentService = {
 	bookAppointment,
 	bookAppointmentCallback,
 };
