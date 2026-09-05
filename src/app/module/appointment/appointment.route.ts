@@ -7,14 +7,20 @@ const router = Router();
 
 router.post(
 	"/book-appointment",
-	auth(Role.ADMIN, Role.DOCTOR, Role.PATIENT, Role.SUPER_ADMIN),
+	auth(Role.PATIENT),
 	AppointmentController.bookAppointment,
 );
 
 router.post(
 	"/pay-appointment",
-	auth(Role.ADMIN, Role.DOCTOR, Role.PATIENT, Role.SUPER_ADMIN),
+	auth(Role.PATIENT),
 	AppointmentController.payAppointment,
+);
+
+router.post(
+	"/cancel-appointment",
+	auth(Role.PATIENT, Role.ADMIN, Role.SUPER_ADMIN),
+	AppointmentController.cancelAppointment,
 );
 
 // book appointment payment callback url
