@@ -10,8 +10,6 @@ export const validateRequest = (zodSchema: z.ZodObject) => {
 			payload = JSON.parse(req.body.data);
 		}
 
-		console.log(payload, "parsed payload");
-
 		const result = zodSchema.safeParse(payload);
 		if (!result.success) {
 			console.log(result.error);

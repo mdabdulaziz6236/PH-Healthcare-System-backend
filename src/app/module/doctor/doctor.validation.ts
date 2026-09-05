@@ -28,3 +28,8 @@ export const ApplyAsDoctorValidationZodSchema = z.object({
 			.regex(/^\+?[1-9]\d{1,14}$/, "Invalid phone number format"),
 	}),
 });
+
+export const DoctorEmailVerifyZodSchema = z.object({
+	email: z.email(),
+	otp: z.string().length(6),
+});
