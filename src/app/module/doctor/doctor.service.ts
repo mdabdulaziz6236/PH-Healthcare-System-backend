@@ -3,14 +3,21 @@ import type { UploadApiResponse } from "cloudinary";
 import crypto from "crypto";
 import ejs from "ejs";
 import path from "path";
-import { Role } from "../../../../generated/prisma/enums";
+import {
+	DoctorVerificationStatus,
+	Role,
+} from "../../../../generated/prisma/enums";
 import config from "../../config";
 import { cloudinary } from "../../lib/cloudinary";
 import { transporter } from "../../lib/nodemailer";
 import { prisma } from "../../lib/prisma";
 import { redisClient } from "../../lib/redis";
-import type { IApplyAsDoctorPayload } from "./doctor.interface";
+import type {
+	IApplyAsDoctorPayload,
+	IApproveDoctorPayload,
+} from "./doctor.interface";
 import type { IVerifyEmailPayload } from "../auth/auth.interface";
+import type { RequestUser } from "../../middleware/checkAuth";
 
 const applyAsDoctor = async (
 	payload: IApplyAsDoctorPayload,
@@ -179,7 +186,97 @@ const verifyDoctorEmail = async (payload: IVerifyEmailPayload) => {
 	return verifiedUser;
 };
 
+const approveDoctor = async (
+	payload: IApproveDoctorPayload,
+	reviewer: RequestUser,
+) => {
+	const { doctorId, verificationStatus, rejectionReason } = payload;
+	const exsitingDoctor = await prisma.doctor.findUnique({
+		where: {
+			id: doctorId,
+		},
+		include: {
+			user: true,
+		},
+	});
+
+	if (!exsitingDoctor) {
+		throw new Error("Doctor Application not found");
+	}
+	if (exsitingDoctor.isDeleted) {
+		throw new Error("Doctor Application Has Been Deleted");
+	}
+
+	if (!exsitingDoctor.user.emailVerified) {
+		throw new Error("Doctor email is not verified ! It can not be reviewed.");
+	}
+
+	if (exsitingDoctor.verificationStatus !== DoctorVerificationStatus.PENDING) {
+		throw new Error(
+			`Doctor Application Has Already Been ${exsitingDoctor.verificationStatus.toLowerCase()}`,
+		);
+	}
+
+	if (verificationStatus === "REJECTED" && !rejectionReason) {
+		throw new Error(
+			"Rejection reason is required when rejecting a doctor application",
+		);
+	}
+
+	const updatedDoctor = await prisma.doctor.update({
+		where: {
+			id: doctorId,
+		},
+		data: {
+			verificationStatus,
+			rejectionReson:
+				verificationStatus === DoctorVerificationStatus.REJECTED
+					? rejectionReason
+					: null,
+			reviewedBy: reviewer.userId,
+			reviewedAt: new Date(),
+		},
+	});
+
+	const isApproved =
+		updatedDoctor.verificationStatus === DoctorVerificationStatus.APPROVED;
+	const templatePath = path.join(
+		process.cwd(),
+		`src/app/templates/${isApproved ? "doctor-application-approved.ejs" : "doctor-application-rejected.ejs"}`,
+	);
+
+	const templateData = {
+		name: updatedDoctor.name,
+		reason: updatedDoctor.rejectionReason,
+	};
+
+	const html = await ejs.renderFile(templatePath, templateData);
+
+	await transporter.sendMail({
+		from: config.email_sender,
+		to: updatedDoctor.email,
+		subject: isApproved
+			? "Your Doctor Application Has Been Approved"
+			: "Your Doctor Application Has Been Rejected",
+		html,
+	});
+
+	return updatedDoctor;
+};
+
+const getAllDoctors = async () => {
+	// search , filter, pagination, sorting
+	const doctors = await prisma.doctor.findMany({
+		include: {
+			user: true,
+		},
+	});
+	return doctors;
+};
+
 export const DoctorServices = {
 	applyAsDoctor,
 	verifyDoctorEmail,
+	approveDoctor,
+	getAllDoctors,
 };

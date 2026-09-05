@@ -40,7 +40,31 @@ const verifyDoctorEmail = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+const approveDoctor = catchAsync(async (req: Request, res: Response) => {
+	const payload = req.body;
+	const reviewer = req.user!;
+	const result = await DoctorServices.approveDoctor(payload, reviewer);
+	sendResponse(res, {
+		statusCode: httpStatus.CREATED,
+		success: true,
+		message: "Doctor Approved Successfully.",
+		data: result,
+	});
+});
+
+const getAllDoctors = catchAsync(async (req: Request, res: Response) => {
+	const doctors = await DoctorServices.getAllDoctors();
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "Doctors retrieved successfully.",
+		data: doctors,
+	});
+});
+
 export const DoctorController = {
 	applyAsDoctor,
 	verifyDoctorEmail,
+	approveDoctor,
+	getAllDoctors,
 };
