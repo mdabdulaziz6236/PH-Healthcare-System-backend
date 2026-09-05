@@ -44,3 +44,9 @@ enum PaymentGateway {
   ROCKET
   SSLCOMMERZ
 }
+
+enum DoctorVerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

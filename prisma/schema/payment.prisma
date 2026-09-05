@@ -30,7 +30,7 @@ model Payment {
 
   // System Timestamps
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("payments")
 }
