@@ -18,7 +18,8 @@ model Doctor {
   reviewedBy         String?
   reviewedAt         DateTime?
   resume             String?
-  additionalFiles    String[]
+  resumePublicId     String?
+  additionalFiles    Json? // Array of file URLs or file metadata // source: [{url:"....",publicId:"...."}]
 
   isDeleted Boolean   @default(false)
   deletedAt DateTime?

@@ -5,31 +5,26 @@ import { sendResponse } from "../../utils/sendResponse";
 import { DoctorServices } from "./doctor.service";
 
 const applyAsDoctor = catchAsync(async (req: Request, res: Response) => {
+	// Cast req.files to access the fields cleanly
+	const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-    // Cast req.files to access the fields cleanly
-  const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-  
-  // Extract the single resume file (it will be the first item in its array)
-  const resume = files?.['resume'] ? files['resume'][0] : undefined;
-  
-  // Extract the array of additional files
-  const additionalFiles = files?.['additionalFiles'] || [];
-  
-  const data = JSON.parse(req.body.data);
+	// Extract the single resume file (it will be the first item in its array)
+	const resume = files?.["resume"] ? files["resume"][0] : null;
 
+	// Extract the array of additional files
+	const additionalFiles = files?.["additionalFiles"] || [];
+	const payload = req.body;
 
-
-	const result = await DoctorServices.applyAsDoctor();
-	console.log({
-		resume,additionalFiles,
-		data,
-	});
-
+	const result = await DoctorServices.applyAsDoctor(
+		payload,
+		resume,
+		additionalFiles,
+	);
 	sendResponse(res, {
 		statusCode: httpStatus.CREATED,
 		success: true,
 		message: "Applied As Doctor Successfully.",
-		data: {},
+		data: result,
 	});
 });
 

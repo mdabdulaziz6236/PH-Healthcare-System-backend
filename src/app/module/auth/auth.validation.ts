@@ -1,4 +1,4 @@
-import z, { email } from "zod";
+import z from "zod";
 
 const PatientRegistraitonZodSchema = z.object({
 	name: z.string().min(3).max(20),

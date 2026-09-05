@@ -1,10 +1,16 @@
 import type { NextFunction, Request, Response } from "express";
-import { catchAsync } from "../utils/catchAsync";
 import type z from "zod";
+import { catchAsync } from "../utils/catchAsync";
 
 export const validateRequest = (zodSchema: z.ZodObject) => {
 	return catchAsync((req: Request, res: Response, next: NextFunction) => {
-		const payload = req.body ?? {};
+		let payload = req.body ?? {};
+
+		if (req.body && typeof req.body.data === "string") {
+			payload = JSON.parse(req.body.data);
+		}
+
+		console.log(payload, "parsed payload");
 
 		const result = zodSchema.safeParse(payload);
 		if (!result.success) {
